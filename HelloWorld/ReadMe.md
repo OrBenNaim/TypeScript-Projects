@@ -1,5 +1,5 @@
 This is the first project in TypeScript.
-The goal is to get input (string that represents name) from the user via the console and to print "Hello, <name>!".
+The goal is to get input (string that represents name) from the user via the console and to print "Hello, givenName!".
 
 Requirements:
 1) Create a 'greeter' class with a 'greet' method that takes a name parameter.
