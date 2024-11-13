@@ -2,7 +2,8 @@ import * as readline from 'readline';
 
 class Greeter{
 
-    static greet(name: string): string{
+    // The greeter method defined as static because 
+    static greet(name: string): string{     
         return `Hello, ${name}!`;
     }
 }
@@ -22,4 +23,5 @@ function main(): void{
     });
 }
 
+// Call the main function
 main();
