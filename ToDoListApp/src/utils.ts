@@ -1,12 +1,5 @@
 import * as readline from 'readline';
 
-enum CommandOpstions {
-    A = "A",    // 'A' for Add task
-    E = "E",    // 'E' for Edit task
-    D = "D",    // 'D' for Delete task
-    Q = "Q"     // 'Q' for Quit
-}
-
 
 interface Task {
     id: number;
@@ -20,10 +13,10 @@ class TaskList {
     // Constructor with a default values
     constructor(
         private arrOfTasks: Array<Task> = [],                   // This field describes an array of Task objects.
-        private commandMenu: string = `Enter a command:\n       
-        (A)dd task\n
-        (E)dit task\n
-        (D)elete task\n
+        private commandMenu: string = `Enter a command:       
+        (A)dd task
+        (E)dit task
+        (D)elete task
         (Q)uit\n`        
     ) {}
 
@@ -33,9 +26,18 @@ class TaskList {
         console.log("\nTo-DO List App\n\nTasks:");
         
         // Display the tasks:
-        this.arrOfTasks.forEach((element, index, array) =>
-            console.log(`\t${array[index].id}. ${array[index].title}\n`));
-
+        this.arrOfTasks.forEach((element, index, array) => {
+            const task = array[index];
+            let taskStatus: string;
+            if (task.completed){
+                taskStatus = "Completed";
+            }
+            else{
+                taskStatus = "Not completed";
+            }
+            
+            console.log(`\t${task.id}. ${task.title} - ${task.description}: ${taskStatus}\n`)
+            });
         console.log(`\n${this.commandMenu}`);
     }
 
@@ -56,6 +58,11 @@ class TaskList {
     }
 
 
+    deleteTask(task: Task): void{
+        const idx = this.arrOfTasks.indexOf(task);
+        this.arrOfTasks.splice(idx, 1);
+    }
+
     doTask(task: Task): void {
         task.completed = true;
     }
@@ -69,11 +76,8 @@ class TaskList {
 // This class will handle the CLI.
 export class ListApp{
     
-    constructor(
-        private toDoList: TaskList = new TaskList()
-    ){}
+    constructor(private toDoList: TaskList = new TaskList()){}
 
-    
     question(readLine: readline.Interface, query: string): Promise<string> {
         return new Promise((resolve) => {
             readLine.question(query, (answer) => {
@@ -81,7 +85,6 @@ export class ListApp{
             });
         });
     }
-    
     
     async run(){
         // Importing 'readline' to handle user input from the console
@@ -94,12 +97,11 @@ export class ListApp{
             this.toDoList.displayList();
             const command = await this.question(readLine, 'Command: ');
 
-                switch(command){
+                switch(command.toUpperCase()){    // Ensures case-insensitive command comparison
                     case 'A':
                         const title = await this.question(readLine, 'Enter task title (or press Enter to skip): ');
                         const description = await this.question(readLine, 'Enter task description (or press Enter to skip): ');
                         this.toDoList.addTask(title, description);
-                        console.log("Task added!");
                     break;
 
                 case 'E':
@@ -107,7 +109,7 @@ export class ListApp{
                     break;
 
                 case 'D':
-                    console.log("Delete functionality not yet implemented.");
+                    
                     break;
 
                 case 'Q':
@@ -116,7 +118,8 @@ export class ListApp{
                     return;
 
                 default:
-                    console.log("Invalid command. Please try again.");
+                    console.log("Invalid command, please try again.");
+                    await new Promise((resolve) => setTimeout(resolve, 2000));
                     break;
             }
         }
